@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Asignación de Discursos</title>
+    <style>
+        /* Estilos combinados del formulario y el resultado */
+        body { font-family: sans-serif; max-width: 850px; margin: 3rem auto; padding: 0 1.5rem; background-color: #121212; color: #e0e0e0; }
+        .nav { display: flex; gap: 10px; margin-bottom: 2rem; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .nav a { color: #b3b3b3; text-decoration: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; }
+        .nav a.active { background-color: #0056b3; color: white; }
+        .nav a:hover:not(.active) { background-color: #1e1e1e; }
+        h2 { color: #ffffff; margin-bottom: 1.5rem; }
+        
+        /* Formulario */
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; font-weight: bold; margin-bottom: 0.5rem; color: #b3b3b3; }
+        input[type="text"], input[type="date"], select { width: 100%; padding: 0.8rem; box-sizing: border-box; background-color: #1e1e1e; color: #ffffff; border: 1px solid #333; border-radius: 4px; font-size: 1rem; }
+        input:focus, select:focus { outline: none; border-color: #0056b3; }
+        button, .btn { width: 100%; padding: 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 1.1rem; font-weight: bold; color: white; text-align: center; display: inline-block; box-sizing: border-box;}
+        .btn-principal { background-color: #0056b3; }
+        .btn-principal:hover { background-color: #004494; }
+
+        /* Hoja de resultado */
+        #vista-resultado { display: none; } /* Oculto por defecto */
+        #hoja-carta { background: white; color: black; width: 210mm; min-height: 280mm; padding: 20mm 20mm; margin: 0 auto 2rem auto; box-sizing: border-box; border-radius: 4px; font-family: 'Georgia', serif; font-size: 12pt; line-height: 1.5; text-align: justify; overflow: hidden; }
+        .encabezado { margin-bottom: 1.5rem; }
+        .fecha { text-align: right; }
+        .parrafo { text-indent: 0; margin-bottom: 1rem; }
+        .despedida { margin-top: 1.5rem; font-weight: bold; }
+        .bloque-firmas { display: flex; justify-content: space-between; margin-top: 3rem; text-align: center; font-size: 11pt; }
+        .firma { width: 30%; }
+        .firma-nombre { font-weight: bold; padding-bottom: 5px; }
+        .firma-cargo { border-top: 1px solid black; padding-top: 5px; }
+        
+        .botones-resultado { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; }
+        .botones-resultado button, .botones-resultado .btn { width: auto; padding: 0.8rem 1.5rem; }
+        .btn-pdf { background-color: #28a745; }
+        .btn-pdf:hover { background-color: #218838; }
+        .btn-secundario { background-color: #444; }
+        .btn-secundario:hover { background-color: #555; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="nav">
+        <a href="/" class="active">Discursos</a>
+        <a href="/oracion.html">Oraciones</a>
+    </div>
+
+    <div id="seccion-formulario">
+        <h2>Asignación de Discurso</h2>
+        <form id="form-discurso">
+            <div class="form-group">
+                <label for="sexo">Tratamiento:</label>
+                <select id="sexo" required>
+                    <option value="M">Hermano</option>
+                    <option value="F">Hermana</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="nombre">Nombre (Opcional):</label>
+                <input type="text" id="nombre" placeholder="Ej. Juan" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="titulo">Se le ha asignado un discurso de siete minutos...:</label>
+                <input type="text" id="titulo" placeholder="Ej. El poder de la fe..." required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="fecha_emision">Fecha de emisión de la invitación:</label>
+                <input type="date" id="fecha_emision" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_reunion">Fecha de la reunión (Domingo):</label>
+                <input type="date" id="fecha_reunion" required>
+            </div>
+            <button type="submit" class="btn-principal">Generar Invitación</button>
+        </form>
+    </div>
+
+    <div id="vista-resultado">
+        <h2 style="text-align: center;">Vista Previa del Documento</h2>
+        
+        <div id="hoja-carta">
+            <div class="encabezado">
+                <div class="fecha">Envigado <span id="out-fecha-emision"></span></div>
+                <div id="out-tratamiento"></div>
+            </div>
+            <div class="parrafo">Con gran alegría y gratitud, le extendemos una cordial invitación a participar en nuestra próxima Reunión Sacramental, que se llevará a cabo el domingo <span id="out-fecha-reunion"></span>. Se le ha asignado un discurso de siete minutos <span id="out-titulo"></span>.</div>
+            <div class="parrafo">Le invitamos a prepararse con espíritu de oración, buscando inspiración para tocar el corazón de quienes asistan. Su dedicación, disposición y esmero en la preparación de este mensaje contribuirán a que nuestra reunión sea una experiencia espiritual significativa y edificante. Rogamos que el Espíritu Santo le guíe en este proceso, para que su mensaje llegue con poder y amor a cada alma presente.</div>
+            <div class="parrafo">Le invitamos a sentarse con nosotros en el púlpito durante esta reunión y a llegar con 5 minutos de anticipación como preparación. Como parte de su preparación recuerde que "En la reunión sacramental no se deben utilizar ayudas visuales ni materiales audiovisuales" (véase 38.8.3 - Manual General: Servir en La Iglesia de Jesucristo de los Santos de los Últimos Días).</div>
+            <div class="parrafo">Si lo desea, le animamos a escribir su discurso y compartirlo con nosotros. De este modo, podremos difundirlo entre nuestros hermanos y preservarlo como parte de la historia de nuestro amado Barrio Envigado.</div>
+            <div class="parrafo">Agradecemos de antemano su confirmación y el servicio amoroso que brinda en esta sagrada asignación.</div>
+            <div class="despedida">Con aprecio y gratitud,<br>OBISPADO BARRIO ENVIGADO</div>
+            <div class="bloque-firmas">
+                <div class="firma"><div class="firma-nombre">Johan Ruiz</div><div class="firma-cargo">1er Consejero</div></div>
+                <div class="firma"><div class="firma-nombre">Alejandro Taborda</div><div class="firma-cargo">Obispo</div></div>
+                <div class="firma"><div class="firma-nombre">Luis Vasquez</div><div class="firma-cargo">2do Consejero</div></div>
+            </div>
+        </div>
+        
+        <textarea id="textoOculto" style="display:none;"></textarea>
+        
+        <div class="botones-resultado">
+            <button class="btn-principal" id="btn-copiar">Copiar Texto Plano</button>
+            <button class="btn-pdf" id="btn-pdf">Descargar PDF</button>
+            <button class="btn-secundario" id="btn-volver">Generar otra</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
