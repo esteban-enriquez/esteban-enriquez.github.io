@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Invitación Generada</title>
+    <style>
+        body { font-family: sans-serif; max-width: 850px; margin: 2rem auto; padding: 0 1rem; background-color: #121212; color: #e0e0e0; }
+        h2 { color: #ffffff; text-align: center; margin-bottom: 1.5rem; }
+        #hoja-carta { background: white; color: black; width: 210mm; min-height: 280mm; padding: 20mm 20mm; margin: 0 auto 2rem auto; box-sizing: border-box; border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.5); font-family: 'Georgia', serif; font-size: 12pt; line-height: 1.5; text-align: justify; overflow: hidden; }
+        .encabezado { margin-bottom: 1.5rem; }
+        .fecha { text-align: right; }
+        .parrafo { text-indent: 0; margin-bottom: 1rem; }
+        .despedida { margin-top: 1.5rem; font-weight: bold; }
+        .bloque-firmas { display: flex; justify-content: space-between; margin-top: 3rem; text-align: center; font-size: 11pt; }
+        .firma { width: 30%; }
+        .firma-nombre { font-weight: bold; padding-bottom: 5px; }
+        .firma-cargo { border-top: 1px solid black; padding-top: 5px; }
+        .botones { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; }
+        button, .btn { padding: 0.8rem 1.5rem; border: none; cursor: pointer; text-decoration: none; text-align: center; font-size: 1rem; border-radius: 4px; font-weight: bold; color: white;}
+        .btn-copiar { background-color: #0056b3; }
+        .btn-copiar:hover { background-color: #004494; }
+        .btn-pdf { background-color: #28a745; }
+        .btn-pdf:hover { background-color: #218838; }
+        .btn-secundario { background-color: #444; }
+        .btn-secundario:hover { background-color: #555; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <h2>Vista Previa del Documento</h2>
+    <div id="hoja-carta">
+        <div class="encabezado">
+            <div class="fecha">Envigado {{ fecha_emision }}</div>
+            <div>{{ tratamiento }}</div>
+        </div>
+        <div class="parrafo">Con gran alegría y gratitud, le extendemos una cordial invitación a participar en nuestra próxima Reunión Sacramental, que se llevará a cabo el domingo {{ fecha_reunion }}. Se le ha asignado un discurso de siete minutos{{ titulo }}.</div>
+        <div class="parrafo">Le invitamos a prepararse con espíritu de oración, buscando inspiración para tocar el corazón de quienes asistan. Su dedicación, disposición y esmero en la preparación de este mensaje contribuirán a que nuestra reunión sea una experiencia espiritual significativa y edificante. Rogamos que el Espíritu Santo le guíe en este proceso, para que su mensaje llegue con poder y amor a cada alma presente.</div>
+        <div class="parrafo">Le invitamos a sentarse con nosotros en el púlpito durante esta reunión y a llegar con 5 minutos de anticipación como preparación. Como parte de su preparación recuerde que "En la reunión sacramental no se deben utilizar ayudas visuales ni materiales audiovisuales" (véase 38.8.3 - Manual General: Servir en La Iglesia de Jesucristo de los Santos de los Últimos Días).</div>
+        <div class="parrafo">Si lo desea, le animamos a escribir su discurso y compartirlo con nosotros. De este modo, podremos difundirlo entre nuestros hermanos y preservarlo como parte de la historia de nuestro amado Barrio Envigado.</div>
+        <div class="parrafo">Agradecemos de antemano su confirmación y el servicio amoroso que brinda en esta sagrada asignación.</div>
+        <div class="despedida">Con aprecio y gratitud,<br>OBISPADO BARRIO ENVIGADO</div>
+        <div class="bloque-firmas">
+            <div class="firma"><div class="firma-nombre">Johan Ruiz</div><div class="firma-cargo">1er Consejero</div></div>
+            <div class="firma"><div class="firma-nombre">Alejandro Taborda</div><div class="firma-cargo">Obispo</div></div>
+            <div class="firma"><div class="firma-nombre">Luis Vasquez</div><div class="firma-cargo">2do Consejero</div></div>
+        </div>
+    </div>
+    
+    <textarea id="textoOculto" style="display:none;">{{ invitacion_plana }}</textarea>
+    <div class="botones">
+        <button class="btn-copiar" onclick="copiarAlPortapapeles()">Copiar Texto Plano</button>
+        <button class="btn-pdf" onclick="generarPDF()">Descargar PDF</button>
+        <a href="/" class="btn btn-secundario">Generar otra</a>
+    </div>
+
+    <script>
+        function copiarAlPortapapeles() { var texto = document.getElementById("textoOculto").value; navigator.clipboard.writeText(texto).then(function() { alert("Mensaje copiado al portapapeles."); }).catch(function(error) { alert("Error al copiar: " + error); }); }
+        function generarPDF() { window.scrollTo(0, 0); const elemento = document.getElementById('hoja-carta'); const opciones = { margin: 0, filename: 'Invitación_Discurso.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, scrollY: 0 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }; setTimeout(() => { html2pdf().set(opciones).from(elemento).save(); }, 100); }
+    </script>
+</body>
+</html>
